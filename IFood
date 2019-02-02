@@ -1,0 +1,9 @@
+SUBMODULE interface IFOOD
+IMPORT: NONE
+EXPORT: NONE
+  
+  SUBMODULE calcExpiry(Date today)
+  SUBMODULE calcSpace(FoodClass food)
+
+END SUBMODULE
+

@@ -1,0 +1,123 @@
+food class(Superclass) implements IFood interface
+  classfields:
+    name (String)
+    storageTemp (Real)
+    packaging (String)
+ 
+  SUBMODULE: Default Constructor
+  IMPORT: NONE
+  EXPORT: NONE
+    name =  "abc"
+    storageTemp = 0.0
+    packaging = "abc"
+  END SUBMODULE
+
+  SUBMODULE: Alternate Constructor
+  IMPORT: name, storageTemp, packaging
+  EXPORT: NONE
+      setName <-- inName
+      setStorageTemp <-- inStorageTemp
+      setPackaging <-- inPackaging
+  END SUBMODULE
+
+  SUBMODULE: Copy Constructor
+  IMPORT: 
+  EXPORT:
+      name = foodClass.getName <-- NONE
+      storageTemp = foodClass.getStorageTemp <-- NONE
+      packaging = foodClass.getPackaging <-- NONE
+  END SUBMODULE
+
+  SUBMODULE getName
+  IMPORT: NONE
+  EXPORT: name
+      export name
+  END SUBMODULE
+
+  SUBMODULE:  getStorageTemp
+  IMPORT: NONE
+  EXPORT: storageTemp
+    export storageTemp
+  END SUBMODULE
+
+  SUBMODULE: getPackaging
+    IMPORT: NONE
+    EXPORT: packaging
+      export packaging
+  END SUBMODULE
+
+ 
+  SUBMODULE: setName
+    IMPORT: inName (String)
+    EXPORT: NONE
+      IF name EQUALS "" THEN
+        (THROW illegal argument exception)
+      END IF
+      IF name EQUALS null THEN
+        (THROW ILLEGAL ARGUMENT EXCEPTION)
+      END IF
+      name = inName
+  END SUBMODULE
+
+  SUBMODULE: setStorageTemp
+    IMPORT: storageTemp
+    EXPORT: Nothing
+      storageTemp = inStorageTemp
+  END SUBMODULE 
+ 
+  SUBMODULE: setPackaging
+    IMPORT: packaging
+    EXPORT: NONE
+    
+     IF packaging EQUALS ""
+       FAIL(THROW ILLEGAL ARGUMENT EXCEPTION)
+     END IF
+     IF packaging = null
+       FAIL(THROW ILLEGAL ARGUMENT EXCEPTION)
+     packaging = inPackaging
+     END IF
+  END SUBMODULE
+   
+  SUBMODULE equals
+    IMPORT: inObject
+    EXPORT: isEqual (Boolean)
+      isEqual = false
+      IF inObject is really a foodClass THEN
+        make inObject to a foodClass named inFood
+        IF name is same as inName.getName <-- NONE THEN
+          IF storageTemp is same as inStorageTemp.getStorageTemp <-- NONE THEN
+            IF packaging is same as inPackaging.getPackaging<--NONE THEN
+            isEqual = true
+            END IF
+          END IF
+        END IF
+      END IF
+  END SUBMODULE    
+
+  SUBMODULE toString
+    IMPORT: NONE
+    EXPORT: nameString
+      nameString = (name + ", " + storageTemp + "," + packaging)
+  END SUBMODULE
+                                
+
+  ABSTRACT SUBMODULE calcExpiry
+    IMPORT: today
+    EXPORT: isExpired (Boolean)
+  END ABSTRACT SUBMODULE
+
+  SUBMODULE calcSpace
+    IMPORT: Food
+    EXPORT: 0 (Integer)     comment export dummy
+  END SUBMODULE
+    
+
+
+
+
+
+
+        
+
+    
+

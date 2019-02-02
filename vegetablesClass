@@ -1,0 +1,96 @@
+vegetablesClass (inherits from class food)
+  classfields:
+    weight (Real)
+    bestBeforeDate (Date)
+ 
+  SUBMODULE Default Constructor
+  IMPORT: NONE 
+  EXPORT: NONE
+    super default constructor
+      weight = 2.0
+      usebyDate = today's date
+  END SUBMODULE
+
+  SUBMODULE Alternate Constructor
+  IMPORT: inName, inWeight, inStorageTemp, inBestBeforeDate, inPackaging
+  EXPORT: NONE
+    comment: send all super values to alternate super constructor
+    super <-- inName, inCut, inWeight, inStroageTemp, inUseByDate, inPackaging
+    setWeight <-- inWeight
+    setBestBeforeDate <-- inBestBeforeDate
+  END SUBMODULE
+
+  SUBMODULE Copy Constructor
+  IMPORT: inMeat
+  EXPORT: NONE
+    weight = vegetablesClass.getWeight <-- NONE
+    bestBeforeDate = vegetablesClass.getBestBeforeDate <-- NONE
+  END SUBMODULE
+
+  SUBMODULE clone
+  IMPORT: NONE
+  EXPORT: vegetables
+    create new vegetables <-- inCut, inWeight, inUseByDate
+  END SUBMODULE
+
+  SUBMODULE getWeight
+  IMPORT: NONE
+  EXPORT: weight
+    export weight
+  END SUBMODULE
+
+  SUBMODULE getUsebyDate
+  IMPORT: NONE
+  EXPORT: usebyDate
+    export usebyDate
+  END SUBMODULE
+
+  SUBMODULE setWeight
+  IMPORT: inWeight
+  EXPORT: NONE
+    IF inWeight < 0 THEN
+      (THROW ILLEGAL ARGUMENT EXCEPTION)
+    END IF
+    IF inWeight < 0.2 OR inWeight > 0.5 THEN
+      (THROW ILLEGAL ARGUMENT EXCEPTION)
+    END IF
+    weight = inWeight
+  END SUBMODULE
+
+  SUBMODULE setBestBeforeDate
+  IMPORT: inBestBeforeDate
+  EXPORT: NONE
+    bestBeforeDate = inBestBeforeDate
+  END SUBMODULE
+
+  SUBMODULE equals
+  IMPORT: inObject
+  EXPORT isEquals
+    isEqual = false
+    IF inObject is really a vegetablesClass named inVegetables THEN
+      make inObject to a vegetablesClass name inVegetables
+        IF weight = inGrain.getweight <-- NONE THEN
+          IF bestBeforeDate = inGrain.getBestBeforeDate
+            isEquals = true
+          END IF
+        END IF
+    END IF
+ 
+  END SUBMODULE
+
+  SUBMODULE toString
+  IMPORT: NONE
+  EXPORT: state of the meatClass in the form of a string
+    String vegetablesString = ("Vegetables ," + super.getName+  ","  + weight + "," + super.getStorageTemp +  bestBeforeDate + super.getPackaging)
+  END SUBMODULE
+
+  SUBMODULE calcExpiry
+  IMPORT: today (Date)
+  EXPORT: isExpired (Boolean)
+    isExpired = false
+    IF bestBeforeDate is after today's date THEN
+      isExpired = true
+    END IF
+  END SUBMODULE
+
+  

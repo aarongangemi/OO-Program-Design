@@ -1,0 +1,144 @@
+SUBMODULE getNoOfLines
+Import: fileName
+Export: numberOfLines
+    
+    theFile = OPENFILE fileName
+    numberOfLines = 0
+    INPUT line FROM theFile
+      WHILE(line NOT EOF)
+        numberOfLines = numberOfLines + 1
+      END WHILE
+    CLOSEFILE theFIle
+
+    CLOSE theFile
+END SUBMODULE
+
+SUBMODULE readFile
+Import: fileName
+Export: storage
+    storageNameArray (ARRAY OF String) (LENGTH OF 3) 
+    storageCapacityArray (ARRAY OF Integer) (LENGTH OF 3) 
+    OPENFILE fileName
+    theFile = OPENFILE fileName
+    FOR i = 0 to 3 (exclusive) CHANGEBY 1 DO
+      INPUT line FROM theFile
+      storageNameArray[i] = processStorage<--line
+      storageCapacityArray[i] = processCapacity<--line 
+      IF storageNameArray[i].equals("Fridge") THEN
+        fridgeCapacity = storageCapacityArray[i]
+      ELSE IF storageNameArray[i].equals("Freezer")
+        freezerCapacity = storageCapacityArray[i]
+      ELSE storageNameArray[i].equals("Pantry")
+        pantryCapacity = storageCapacityArray[i]
+      END IF
+    END FOR
+    create new storage of type StorageClass <-- fridgeCapacity, freezerCapacity, pantryCapacity
+    readFoodLines<--bufRdr, storage
+    CLOSEFILE theFile  
+END SUBMODULE
+
+SUBMODULE processStorage
+Import: line
+Export: storageName
+    lineArray = SPLIT line ON '',''
+    storageName = lineArray[0]
+END SUBMODULE
+
+SUBMODULE processCapacity
+Import: line
+Export: capacity
+    lineArray = SPLIT line ON '',''
+    capacity = (CONVERT TO INTEGER) lineArray[1]
+END SUBMODULE
+
+SUBMODULE writeOutStorage
+Import: storageArrat
+Export: NONE
+    OUTPUT("Please enter filename for storage to be written to")
+    INPUT fileName (String)
+    FOR i = 0 to storageArray.getFridgeCount<-- NONE (exclusive) CHANGEBY 1 DO
+      WRITE ITEM in storageArray[0][i]
+    END FOR
+    FOR i = 0 to LENGTH OF storageArray (exclusive) CHANGEBY 1 DO
+      WRITE ITEM in storageArray[1][i]
+    END FOR
+    FOR i = 0 to LENGTH OF storageArray (exclsuive) CHANGEBY 1 DO
+      WRITE ITEM in storageArray[2][i]
+    END FOR
+    CLOSEFILE theFile
+END SUBMODULE
+
+SUBMODULE readFoodLines
+Import: bufRdr, storage
+Export: NONE
+    comment: do not need to open file again because reading from line 4
+    isValid = true (Boolean)
+    INPUT Line from fileName
+    WHILE (NOT EOF)
+      foodContentsArray = processFood<-- line
+      IF foodContentsArray[0] EQUALS "Meat" THEN
+        name = foodContentsArray[1]
+        cut = foodContentsArray[2]
+        weight = foodContentsArray[3] (Convert to double)
+        storageTemp = foodContentsArray[4] (Convert to double)
+        usebyDate = foodContentsArray[5] (Convert to date)
+        packaging = foodContentsArray[6]
+      IF weight < 0.2 OR weight > 5.0 THEN
+        isValid = false
+      END IF
+      IF isValid != false THEN
+        create new meat = MeatClass<-- name, cut, weight, storageTemp, usebyDate, packaging
+        storage.addFood<-- Meat
+      END IF
+      ELSE IF foodContentsArray[0] EQUALS "Grain"
+        name = foodContentsArray[1]
+        type = foodContentsArray[2]
+        volume = foodContentsArray[3] (Convert to double)
+        storageTemp = foodContentsArray[4] (Convert to double)
+        bestBeforeDate = foodContentsArray[5] (Convert to Date)
+        packaging = foodContentsArray[6] 
+        IF volume < 0.2 OR volume > 5.0 THEN
+          isValid = false
+        END IF
+        IF isValid != false THEN
+          create new grain = GrainClass<-- name, type, volume, storageTemp, bestBeforeDate, packaging
+        storage.addFood <-- Grain
+        END IF
+      ELSE IF foodContentsArray[0] EQUALS "Fruit"
+        name = foodContentsArray[1]
+        type = foodContentsArray[2]
+        numberOfPieces = foodContentsArray[3] (Convert to Integer)
+        storageTemp = foodContentsArray[4] (Convert to double)
+        usebyDate = foodContentsArray[5] (convert to Date)
+        packaging = foodContentsArray[6] 
+        IF numberOfPieces < 1 OR numberOfPieces > 20 THEN
+          isValid = false
+        END IF
+        IF isValid != false
+          create new fruit = FruitClass <-- name, type, numberOfPieces, storageTemp, usebyDate, packaging
+          storage.addFood<-- Fruit
+        END IF
+      ELSE IF  foodContentsArray[0] EQUALS "Vegetables" THEN
+        name = foodContentsArray[1]
+        weight = foodContentsArray[2] (Convert to double)
+        storageTemp = foodContentsArray[3] (convert to double)
+        bestBeforeDate = foodContentsArray[4] (Convert to date)
+        packaging = foodContentsArray[5] 
+        IF weight < 0.2 OR weight > 5.0 THEN
+          isValid = false
+        END IF
+        IF isValid != false THEN
+          create new vegetables = VegetablesClass<-- name, weight, storageTemp, bestBeforeDate, packaging
+          storage.addFood<-- Vegetables
+        END IF
+      INPUT line from FILE
+      END IF
+
+SUBMODULE processFood
+IMPORT: line
+EXPORT: lineArray
+    lineArray = SPLIT line ON '',''
+END SUBMODULE 
+      
+  
+        

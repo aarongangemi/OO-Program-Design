@@ -1,0 +1,271 @@
+Main:
+    getInput = menuNumber <-- NONE
+    CASE(getInput)
+    1:
+    switchFoodMenuOption<--storage
+    getInput = menuNumber <-- NONE
+    2:
+    displayStorageContents<-- storage
+    getInput = menuNumber <-- NONE
+    3:
+    storage.findExpired<-- NONE
+    getInput = menuNumber <-- NONE
+    4:
+    filename = validateFileName<-- NONE
+    storage = IOclass.readFile<--fileName 
+    getInput = menuNumber<--NONE
+    5:
+    IOclass.writeOutStorage<--storage
+    getInput = menuNumber<-- NONE
+    6:
+    removeFood<--storage
+    getInput = menuNumber<-- NONE
+    7:
+    comment: exit program gracefully
+    DEFAULT:
+    OUTPUT("please enter a valid menu number and try again")
+    getInput = menuNumber <-- NONE
+
+SUBMODULE menuNumber
+Import: NONE
+Export: menuNumber
+    isValid = false (Boolean)
+    WHILE isvalid != true
+      OUTPUT("Select a number: ")
+      OUTPUT("1. Add food")
+      OUTPUT("2. Display Contents")
+      OUTPUT("3. Find Expired")
+      OUTPUT("4. Read in Storage")
+      OUTPUT("5. Write out storage")
+      OUTPUT("6. Exit")
+      INPUT menuNumber (Integer)
+      isvalid = true
+    END WHILE
+END SUBMODULE
+
+SUBMODULE switchFoodMenuOption
+Import: storage 
+Export: NONE
+    foodNumber = foodMenu<-- NONE
+    IF storage = null
+      OUTPUT("Storage capacity has not been read in yet")
+    ELSE IF storage != null
+      CASE(foodNumber)
+      1:
+      meat = getMeatInput<-- NONE
+      storage.addFood<-- meat
+      2:
+      grain = getGrainInput<-- NONE
+      storage.addFood<-- grain
+      3:
+      fruit = getFruitInput<-- NONE
+      storage.addFood<-- fruit
+      4:
+      vegetables = getVegetablesInput<-- NONE
+      storage.addFood<-- vegetables
+      END CASE
+    END IF
+END SUBMODULE
+
+SUBMODULE validateFileName
+Import: NONE
+Export: fileName
+    isvalid = false
+    WHILE isvalid != true
+      OUTPUT("Please enter a valid filename")
+      INPUT fileName (String)
+      isvalid = true
+    END WHILE
+END SUBMODULE
+ 
+SUBMODULE foodMenu
+Import: NONE
+Export: foodOption
+    isValid = false
+    WHILE ((isValid != false) AND ((foodOption <= 0) OR (foodOption > 4)))
+      OUTPUT("Please select an option number")
+      OUTPUT("1. Meat")
+      OUTPUT("2. Grain")
+      OUTPUT("3. Fruit")
+      OUTPUT("4. Vegetables")
+      INPUT foodOption (Integer)
+      IF ((foodOption < 1) OR (foodOption > 4))
+        isvalid = true
+      ELSE IF ((foodOption >= 1) AND (foodOption <= 4))
+        isvalid = false
+      END IF
+    END WHILE
+END SUBMODULE
+
+SUBMODULE removeFood
+Import: storage
+Export: NONE
+    isValid = false (Boolean)
+    WHILE isValid != true
+      OUTPUT("Please select number of storage location")
+      OUTPUT("1. Fridge")
+      OUTPUT("2. Freezer")
+      OUTPUT("3. Pantry")
+      INPUT location (Integer)
+      IF (location >= 1 AND location = 3)
+        isValid = true
+      END IF
+    END WHILE
+    OUTPUT("Please enter a number representing the location in selected storage")
+    INPUT itemNumber (Integer)
+    storage.removeItem <--location, itemNumber
+END SUBMODULE
+     
+
+SUBMODULE getMeatInput
+Import: NONE
+Export: meat
+    isvalid = false
+    WHILE isvalid != true
+      OUTPUT("Please enter the name")
+      INPUT name (String)
+      OUTPUT("Please enter the cut")
+      INPUT cut (String) 
+      OUTPUT("Please Enter the Weight")
+      INPUT weight (Real) 
+      IF (weight < 0.2 OR weight > 5.0)
+        OUTPUT("Invalid, weight is out of range. Please try again") 
+        OUTPUT("Please enter the weight")
+        INPUT weight (Real)
+      END IF
+      OUTPUT("Please Enter the storage Temperature")
+      INPUT storageTemp (Real)
+      OUTPUT("Please Enter the useby Date")
+      usebyDate = getValidDate<-- NONE 
+      OUTPUT("Please enter the packaging")
+      INPUT packaging (String)
+      isvalid = true
+    END WHILE
+    Meat meat = new Meat(cut, weight, storageTemp, usebyDate, packaging)      
+END SUBMODULE
+
+SUBMODULE getGrainInput
+Import: NONE
+Export: grain
+Assertion:
+    isvalid = false
+    WHILE isvalid != true
+      OUTPUT("Please enter the name")
+      INPUT name (String)  
+ 	OUTPUT("Please Enter the type")
+        INPUT type (String)
+        OUTPUT("Please Enter the volume")
+        INPUT volume (Real)
+        IF (volume < 0.2 OR volume > 5.0) 
+          OUTPUT("Invalid, volume is outside of range. Please try again")
+          OUTPUT("Please Enter the volume")
+          INPUT volume (Real)
+        END IF
+        OUTPUT("Please Enter the Storage Temperature")
+        INPUT storageTemp (Real)
+        bestBeforeDate = getValidDate<--NONE
+        OUTPUT("Please enter packaging") 
+        INPUT packaging (String)
+        isvalid = true
+    END WHILE
+    Grain grain = new Grain(type, volume, storageTemp, bestBeforeDate, packaging)
+END SUBMODULE
+
+SUBMODULE getFruitInput
+Import: NONE
+Export: fruit
+    isvalid = false
+    WHILE isvalid != true
+      OUTPUT("Please enter the name")
+      INPUT name (String)  
+      OUTPUT("Please enter the type")
+      INPUT type (String)
+      OUTPUT("Please enter the number of pieces")
+      INPUT noOfPieces (Integer)
+      WHILE (noOfPieces < 1 OR noOfPieces > 20)
+        OUTPUT("Number of pieces out of range, please try again")
+        OUTPUT("Please enter the number of pieces")
+        INPUT noOfPieces 
+      END WHILE
+      OUTPUT("Please enter the storage Temperature")
+      INPUT storageTemp (Real)
+      usebyDate = getValidDate<-- NONE
+      OUTPUT("Please enter packaging")
+      INPUT packaging (String)
+      isvalid = true
+    END WHILE
+    Fruit fruit = new fruit(type, noOfPieces, storageTemp, usebyDate, packaging)
+END SUBMODULE
+
+SUBMODULE getVegetablesInput
+Import: NONE
+Export: vegetables
+    isvalid = false
+    WHILE isvalid != true
+      OUTPUT("Please enter the name")
+      INPUT name (String)  
+      OUTPUT("Please enter the weight")
+      INPUT weight (Real)
+      WHILE (weight < 0.2 OR weight > 5.0)
+        OUTPUT("weight out of range. Please try again")
+        OUTPUT("Please enter the weight")
+        INPUT weight (Real)
+      END WHILE
+      OUTPUT("Please enter storage temperature")
+      INPUT storageTemp (Real)
+      bestBeforeDate = getValidDate<--NONE
+      OUTPUT("Please enter packaging")
+      INPUT packaging (String)
+      isvalid = true
+    END WHILE
+    Vegetables vegetables = new vegetables(weight, storageTemp, bestBeforeDate, packaging)
+END SUBMODULE
+
+SUBMODULE displayStorageContents
+Import: storage
+Export: NONE
+    OUTPUT("Please select number of storage location")
+    OUTPUT("1. Fridge")
+    OUTPUT("2. Freezer")
+    OUTPUT("3. Pantry")
+    INPUT location (Integer)
+    foodArray = storage.getStorageArray<-- NONE
+    IF location = 1 THEN
+      fridge = foodArray[0]
+      FOR i = 0 to storage.getFridgeCount<-- NONE (exclusive) changeby 1 
+        OUTPUT(fridge[i].toString<-- NONE)
+      END FOR
+    ELSE IF location = 2
+      freezer = foodArray[1]
+      FOR i = 0 to storage.getFreezerCount<-- NONE (exclusive) changeby 1
+        OUTPUT(freezer[i].toString<--NONE)
+      END FOR
+    ELSE IF location = 3
+      pantry = foodArray[2]
+      FOR i = 0 to storage.getPantryCount<-- NONE (exclusive) changeby 1
+        OUTPUT(pantry[1].toString<--NONE)
+      END FOR
+    END IF
+END SUBMODULE
+
+SUBMOODULE getValidDate
+Import: NONE
+Export: usebyDate
+    WHILE !isvalid
+      OUTPUT("Please enter the day of the usebyDate as an integer")
+      INPUT day (Integer)
+      OUTPUT("Please enter the month of the usebyDate as an integer")
+      INPUT month (Integer)
+      OUTPUT("Please enter the year of the usebyDate as an integer")
+      dateString = (day + "/" + month + "/" + year)
+      (convert usebyDate to String) 
+      IF usebyDate = null THEN
+        isValid = false
+        OUTPUT("Data entered is an invalid date, please try again")
+      ELSE
+       isValid = true
+      END IF
+    END WHILE
+END SUBMODULE
+
+

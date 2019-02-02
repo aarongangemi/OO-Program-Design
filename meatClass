@@ -1,0 +1,119 @@
+meatClass (inherits from class food)
+  classfields:
+    cut (String)
+    weight (Real)
+    usebyDate (Date)
+    
+  SUBMODULE defaultConstructor
+  IMPORT: NONE
+  EXPORT: NONE
+    super default constructor
+      cut = "abc"
+      weight = 2.0
+      usebyDate = today
+  END SUBMODULE
+
+  SUBMODULE alternateConstructor
+  IMPORT: inName, inCut, inWeight, inStorageTemp, inUsebyDate, inPackaging
+  EXPORT: NONE
+    comment: send all super values to alternate super constructor
+    super <-- inName, inCut, inWeight, inStorageTemp, inUseByDate, inPackaging
+    setCut <-- inCut
+    setWeight <-- inWeight
+    usebyDate <-- inUsebyDate
+  END SUBMODULE
+
+  SUBMODULE copyConstructor
+  IMPORT: inMeat
+  EXPORT: NONE
+    super <-- inMeat
+    cut = inMeat.getCut<--NONE
+    weight = inMeat.getWeight <-- NONE
+    useByDate = inMeat.getUseByDate <-- NONE
+  END SUBMODULE
+
+  SUBMODULE clone 
+  IMPORT: NONE
+  EXPORT: outMeat
+    create new Meat <-- inCut, inWeight, inUseByDate
+  
+  SUBMODULE getCut
+  IMPORT: NONE
+  EXPORT: cut
+    export cut
+  END SUBMODULE
+   
+  SUBMODULE getWeight
+  IMPORT: NONE
+  EXPORT: weight
+    export weight
+  END SUBMODULE  
+
+  SUBMODULE getUsebyDate
+    IMPORT: NONE
+    EXPORT: usebyDate
+    export usebyDate
+  END SUBMODULE
+
+  SUBMODULE setCut
+  IMPORT: inCut
+  EXPORT: NONE
+    IF inCut = "" THEN
+      (THROW ILLEGAL ARGUMENT EXCEPTION)
+    END IF
+    IF inCut = null THEN
+      (THROW ILLEGAL ARGUMENT EXCEPTION)
+    END IF
+    cut = inCut
+  END SUBMODULE
+
+  SUBMODULE setWeight 
+  IMPORT: inWeight
+  EXPORT: NONE
+    IF inWeight < 0 THEN
+      (THROW ILLEGAL ARGUMENT EXCEPTION)
+    END IF
+    IF inWeight < 0.2 OR inWeight > 5.0 THEN
+      (THROW ILLEGAL ARGUMENT EXCEPTION)
+    END IF
+    weight = inWeight
+  END SUBMODULE
+
+  SUBMODULE: setUseByDate
+  IMPORT: inUseByDate
+  EXPORT: NONE
+    usebyDate = inUseByDate
+  END SUBMODULE
+
+  SUBMODULE equals
+  IMPORT: inObject
+  EXPORT: isEqual (Boolean)
+    isEqual = false
+    IF inObject is really a meatClass named inMeat THEN
+      make inObject to a meatClass named inMeat
+        IF cut = inMeat.getCut<-- NONE THEN
+          IF weight = inMeat.getWeight <-- NONE THEN
+            IF usebyDate = inMeat.getUseByDate<-- NONE THEN
+              isEqual = true
+            END IF
+          END IF
+        END IF
+      END IF
+    END IF
+  END SUBMODULE
+
+  SUBMODULE toString
+  IMPORT: NONE
+  EXPORT: state of the meatClass in the form of a string
+     meatString  = ("Meat, " + super.getName + "," +" + cut + "," +  weight + "," + super.getStorageTemp + "," + useByDate +  super.getPackaging)
+  END SUBMODULE 
+
+  SUBMODULE calcExpiry
+  IMPORT: today
+  EXPORT isExpired (Boolean)
+    isExpired = false
+    IF usebyDate is after today's date THEN
+      isExpired = true
+    END IF
+  END SUBMODULE
+
